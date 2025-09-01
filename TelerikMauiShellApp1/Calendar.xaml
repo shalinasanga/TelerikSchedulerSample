@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TelerikMauiShellApp1.Calendar"
+             xmlns:telerik="http://schemas.telerik.com/2022/xaml/maui"
+             xmlns:local="clr-namespace:TelerikMauiShellApp1"
+             xmlns:strings="clr-namespace:TelerikMauiShellApp1"
+             Title="Calendar">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!--<converters:ResourceNameConverter x:Key="ResourceNameConverter"/>-->
+            <local:LabelColorToTintConverter x:Key="LabelColorToTintConverter"/>
+            <local:TextToBoolConverter x:Key="TextToBoolConverter"/>
+            <local:StatusToIconConverter x:Key="StatusToIconConverter"/>
+            <local:TitleImageConverter x:Key="TitleImageConverter"/>
+            <local:TitleToColorConverter x:Key="TitleToColorConverter"/>
+            <local:EventStatusToBoolConverter x:Key="EventStatusToBoolConverter"/>
+
+            <local:AppointmentTemplateSelector x:Key="AppointmentTemplateSelector">
+                <local:AppointmentTemplateSelector.AllDay>
+                    <DataTemplate x:DataType="telerik:AppointmentNode">
+                        <Border Stroke="{AppThemeBinding Dark=White,Light={StaticResource BorderColor}}" 
+                             BackgroundColor="{Binding Occurrence.Appointment.BackgroundTintColor}"
+                             StrokeShape="RoundRectangle 0,8,8,0"
+                             StrokeThickness="1" >
+                            <Grid ColumnSpacing="1" ColumnDefinitions="Auto,*">
+                                <HorizontalStackLayout x:Name="LabelList" Grid.Column="0"
+                                                    BindableLayout.ItemsSource="{Binding Occurrence.Appointment.EventLableList}"
+                                                    Spacing="0.8" >
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="local:EventLabelModel">
+                                            <BoxView BackgroundColor="{Binding HexColor}" WidthRequest="2"/>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+                                <Label Grid.Column="1" Text="{Binding Occurrence.Appointment.Subject}" 
+                                    Style="{StaticResource SmallBaseTextColorLable}"
+                                    FontSize="13"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </local:AppointmentTemplateSelector.AllDay>
+                <local:AppointmentTemplateSelector.NormalAppointment>
+                    <DataTemplate x:DataType="telerik:AppointmentNode">
+                        <Border Stroke="{AppThemeBinding Dark=White,Light={StaticResource BorderColor}}" 
+                             BackgroundColor="{Binding Occurrence.Appointment.BackgroundTintColor}"
+                             StrokeThickness="1"  StrokeShape="RoundRectangle 10,10,10,10" IsVisible="True">
+                            <Grid ColumnSpacing="1" RowSpacing="0"
+                               ColumnDefinitions="12,*" IsVisible="True">
+                                <HorizontalStackLayout x:Name="LabelList" Grid.Column="0"
+                                          BindableLayout.ItemsSource="{Binding Occurrence.Appointment.EventLableList}"
+                                          Spacing="0" IsVisible="True" MaximumWidthRequest="13">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="local:EventLabelModel">
+                                            <Grid IsVisible="True">
+                                                <BoxView Color="{Binding HexColor}" WidthRequest="4" IsVisible="True"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+                                <Grid Grid.Column="1" Margin="0" Padding="0" RowSpacing="2"
+                                   HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+                                   RowDefinitions="Auto,15,Auto,Auto">
+                                    <Label Text="{Binding Occurrence.Appointment.Subject}" 
+                                        Style="{StaticResource SmallBaseTextColorBoldLable}" 
+                                        LineBreakMode="WordWrap"/>
+                                    <Grid  HorizontalOptions="FillAndExpand" ColumnSpacing="1"
+                                        ColumnDefinitions="10,*" Grid.Row="1">
+                                        <Image Source="ic_owner.png" HeightRequest="10" WidthRequest="10"/>
+                                        <Label Grid.Column="1" Text="{Binding Occurrence.Appointment.Responsible}" 
+                                            Style="{StaticResource SmallBaseTextColorLable}"
+                                            FontSize="Micro" LineBreakMode="TailTruncation"/>
+                                    </Grid>
+                                    <!--Location details-->
+                                    <Grid HorizontalOptions="StartAndExpand" ColumnSpacing="1"
+                                       ColumnDefinitions="10,*" Grid.Row="2"
+                                              IsVisible="{Binding  Occurrence.Appointment.Location,Converter={StaticResource TextToBoolConverter}}">
+                                        <Image Source="ic_location.png" HeightRequest="10" WidthRequest="10"/>
+                                        <Label Text="{Binding Occurrence.Appointment.LocationCaption}" Grid.Column="1"
+                                            Style="{StaticResource SmallBaseTextColorLable}"
+                                            FontSize="Micro" LineBreakMode="TailTruncation"/>
+                                    </Grid>
+                                    <HorizontalStackLayout Spacing="2" Grid.Row="3">
+                                        <Image Source="{Binding Source={x:Binding Occurrence.Appointment.EventStatusDescription},Converter={StaticResource StatusToIconConverter}}"
+                                            IsVisible="{Binding Source={x:Binding Occurrence.Appointment.EventStatusDescription},Converter={StaticResource EventStatusToBoolConverter}}"
+                                            HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="Private"  Source="ic_cal_private.png" IsVisible="{Binding Occurrence.Appointment.IsPrivate}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="PublishToWeb" Source="ic_cal_web.png" IsVisible="{Binding Occurrence.Appointment.IsPublished}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="PublishedToSognDK" Source="ic_cal_publish_sogndk.png" IsVisible="{Binding Occurrence.Appointment.IsPublishedToSognDK}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="Recurence" Source="ic_cal_recurrance.png" IsVisible="{Binding Occurrence.Appointment.IsReccuringEvent}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="Reminder" Source="ic_cal_reminder.png" IsVisible="{Binding Occurrence.Appointment.HasReminder}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="Attachments" Source="ic_cal_attachment.png" IsVisible="{Binding Occurrence.Appointment.HasAttachments}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="SpecialAttention" Source="ic_cal_important.png" IsVisible="{Binding Occurrence.Appointment.IsSpecialAttention}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="EventMessage" Source="ic_cal_information_outline.png" IsVisible="{Binding Occurrence.Appointment.HasEventMessage}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="LinkAppmnt" Source="ic_cal_links.png" IsVisible="{Binding Occurrence.Appointment.HasLink}" HeightRequest="10" WidthRequest="10"/>
+                                        <Image x:Name="MissingResources" Source="ic_missingresources.png" IsVisible="{Binding Occurrence.Appointment.HasMissingResources}" HeightRequest="10" WidthRequest="10"/>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </local:AppointmentTemplateSelector.NormalAppointment>
+                <local:AppointmentTemplateSelector.TID>
+                    <DataTemplate x:DataType="telerik:AppointmentNode">
+                        <Border Stroke="{AppThemeBinding Dark=White,Light={StaticResource BorderColor}}" 
+                             BackgroundColor="{Binding Occurrence.Appointment.BackgroundTintColor}"
+                             StrokeThickness="1"  StrokeShape="RoundRectangle 10,10,10,10">
+                            <Grid RowDefinitions="*,*" ColumnDefinitions="12,*" 
+                               RowSpacing="2" ColumnSpacing="2">
+                                <!--<StackLayout Grid.Column="1" Orientation="Vertical" Spacing="0" Margin="0" Padding="0"
+                                          HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand">-->
+                                <!--<StackLayout Orientation="Horizontal" Spacing="2">-->
+                                <Image Grid.Row="0" Grid.Column="0" 
+                                            Source="{Binding Occurrence.Appointment.Subject,Converter={StaticResource TitleImageConverter}}"
+                                            HeightRequest="12" WidthRequest="12"/>
+                                <Label Grid.Row="0" Grid.Column="1"
+                                            x:Name="TIDTitle" Text="{Binding Occurrence.Appointment.Subject}" 
+                                            Style="{StaticResource SmallBaseTextColorLable}"
+                                            LineBreakMode="TailTruncation"/>
+                                <!--</StackLayout>-->
+                                <!--<StackLayout Orientation="Horizontal" Spacing="1">-->
+                                <Image Grid.Row="1" Grid.Column="0"
+                                            Source="ic_tid.png" HeightRequest="12" WidthRequest="12"/>
+                                <Label Grid.Row="1" Grid.Column="1"
+                                            Text="{Binding Occurrence.Appointment.TimeString}" FontSize="Micro" 
+                                            Style="{StaticResource SmallBaseTextColorLable}"
+                                            LineBreakMode="TailTruncation"/>
+                                <!--Change this to start and end date proper time string-->
+                                <!--</StackLayout>-->
+                                <!--</StackLayout>-->
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </local:AppointmentTemplateSelector.TID>
+                <local:AppointmentTemplateSelector.XBridge>
+                    <DataTemplate x:DataType="telerik:AppointmentNode">
+                        <Border Stroke="{AppThemeBinding Dark=White,Light={StaticResource BorderColor}}" 
+                             BackgroundColor="{Binding Occurrence.Appointment.BackgroundTintColor}"
+                             StrokeThickness="1"  StrokeShape="RoundRectangle 10,10,10,10">
+                            <Grid ColumnDefinitions="1,*" ColumnSpacing="0">
+                                <VerticalStackLayout Grid.Column="1" Spacing="0" 
+                                          HorizontalOptions="StartAndExpand" VerticalOptions="FillAndExpand">
+                                    <Label Text="{Binding Occurrence.Appointment.Subject}" Style="{StaticResource SmallBaseTextColorLable}"
+                                        LineBreakMode="TailTruncation"/>
+                                    <HorizontalStackLayout  Spacing="1" HorizontalOptions="StartAndExpand">
+                                        <Image Source="ic_owner.png" HeightRequest="10" WidthRequest="10"/>
+                                        <Label Text="X-Bridge" Style="{StaticResource SmallBaseTextColorLable}" FontSize="Micro"
+                                            LineBreakMode="TailTruncation"/>
+                                    </HorizontalStackLayout>
+                                    <Image Source="ic_xbridge.png" HeightRequest="10" WidthRequest="10"
+                                        HorizontalOptions="Start"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </local:AppointmentTemplateSelector.XBridge>
+            </local:AppointmentTemplateSelector>
+            <!--<Style TargetType="telerik:RadBorder" x:Key="HeaderBorderStyle">
+             <Setter Property="BackgroundColor" Value="#EEEAF6" />
+             <Setter Property="BorderBrush" Value="#C3B4DF" />
+             <Setter Property="BorderThickness" Value="0, 0, 0, 2" />
+         </Style>-->
+            <Style TargetType="Label" x:Key="HeaderLabelStyle">
+                <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontFamily" Value="HelveticaRegular" />
+            </Style>
+            <!--<Style TargetType="Button" x:Key="IncreaseVisibleRangeButtonStyle">
+             <Setter Property="Text" Value="{x:Static telerik:TelerikFont.IconForward}" />
+             <Setter Property="TextColor" Value="#674BB2" />
+         </Style>
+         <Style TargetType="Button" x:Key="DecreaseVisibleRangeButtonStyle">
+             <Setter Property="Text" Value="{x:Static telerik:TelerikFont.IconBack}" />
+             <Setter Property="TextColor" Value="#674BB2" />
+         </Style>-->
+            <Style TargetType="Button" x:Key="TodayButtonStyle">
+                <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                <Setter Property="BackgroundColor" Value="{OnPlatform Default=#66C3B4DF, Android=Transparent, iOS=Transparent}" />
+                <Setter Property="BorderWidth" Value="0" />
+            </Style>
+            <Style TargetType="Label" x:Key="HeaderIndicatorLabelStyle">
+                <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                <!-- <Setter Property="BackgroundColor" Value="#66C3B4DF" />
+             <Setter Property="Clip">
+                 <EllipseGeometry RadiusX="12"
+                      RadiusY="12"
+                      Center="{OnPlatform Default='20, 20', iOS='22, 22'}" />
+             </Setter> -->
+            </Style>
+            <Style TargetType="telerik:SchedulerDatePicker">
+                <Setter Property="ButtonStyle">
+                    <Setter.Value>
+                        <Style TargetType="Button">
+                            <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                            <Setter Property="FontFamily" Value="HelveticaRegular" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="telerik:SchedulerDropDownButton">
+                <Setter Property="ButtonStyle">
+                    <Setter.Value>
+                        <Style TargetType="Button">
+                            <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                            <Setter Property="FontAttributes" Value="Bold" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="telerik:NonVirtualizedItemsControlItemContainer" x:Key="ViewDefinitionHeaderItemStyle">
+                <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                <Setter Property="BackgroundColor" Value="{OnPlatform Default=#66C3B4DF, Android=Transparent, iOS=Transparent}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup Name="CommonStates">
+                            <VisualState Name="Normal" />
+                            <VisualState Name="Focused" />
+                            <VisualState Name="PointerOver" />
+                            <VisualState Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="telerik:NonVirtualizedItemsControlItemContainer.BackgroundColor" Value="Transparent" />
+                                    <Setter Property="telerik:NonVirtualizedItemsControlItemContainer.TextColor" Value="#61674BB2" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+            <Style TargetType="telerik:NonVirtualizedItemsControlItemContainer" x:Key="ActiveViewDefinitionHeaderItemStyle">
+                <Setter Property="TextColor" Value="White" />
+                <!--<Setter Property="BackgroundColor" Value="{OnPlatform Default=#674BB2, Android=#F8F8F8}" />-->
+                <Setter Property="BackgroundColor" Value="{StaticResource BrandColor}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup Name="CommonStates">
+                            <VisualState Name="Normal" />
+                            <VisualState Name="Focused" />
+                            <VisualState Name="PointerOver">
+                                <VisualState.Setters>
+                                    <Setter Property="telerik:NonVirtualizedItemsControlItemContainer.BackgroundColor" Value="{StaticResource BrandColorLight}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="telerik:NonVirtualizedItemsControlItemContainer.TextColor" Value="{OnPlatform Default=#61FFFFFF, Android=#61674BB2}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+            <Style TargetType="telerik:SchedulerCurrentTimeIndicator">
+                <Setter Property="Color" Value="{StaticResource BrandColor}" />
+                <Setter Property="LineThickness" Value="3" />
+            </Style>
+            <Style x:Key="DayMoreAppointmentsIndicatorStyle" TargetType="Label">
+                <Setter Property="FontFamily" Value="HelveticaBold" />
+                <!--<Setter Property="FontAttributes" Value="Bold" />-->
+                <Setter Property="FontSize" Value="Micro" />
+                <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                <!--<Setter Property="TextTransform" Value="Uppercase" />-->
+                <Setter Property="Text" Value="{x:Static strings:AppResources.APPOINT_CAL_MORE}" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+            <!--Custom Day Style Selector schedular-->
+            <local:CustomDayStyleSelector x:Key="CustomDayStyleSelector">
+                <local:CustomDayStyleSelector.CustomNormalStyle>
+                    <Style TargetType="Label">
+                        <Setter Property="TextColor" Value="{AppThemeBinding Dark=White,Light={StaticResource Gray500}}" />
+                        <Setter Property="HorizontalTextAlignment" Value="Center" />
+                        <Setter Property="VerticalTextAlignment" Value="Center" />
+                        <Setter Property="FontFamily" Value="HelveticaRegular" />
+                    </Style>
+                </local:CustomDayStyleSelector.CustomNormalStyle>
+                <local:CustomDayStyleSelector.CustomTodayStyle>
+                    <Style TargetType="Label">
+                        <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                        <Setter Property="HorizontalTextAlignment" Value="Center" />
+                        <Setter Property="VerticalTextAlignment" Value="Center" />
+                        <Setter Property="FontFamily" Value="HelveticaRegular" />
+                    </Style>
+                </local:CustomDayStyleSelector.CustomTodayStyle>
+                <local:CustomDayStyleSelector.WeekendLabelStyle>
+                    <Style TargetType="Label">
+                        <Setter Property="TextColor" Value="{StaticResource Gray300}" />
+                        <Setter Property="HorizontalTextAlignment" Value="Center" />
+                        <Setter Property="VerticalTextAlignment" Value="Center" />
+                        <Setter Property="FontFamily" Value="HelveticaRegular" />
+                    </Style>
+                </local:CustomDayStyleSelector.WeekendLabelStyle>
+            </local:CustomDayStyleSelector>
+            <local:CustomDayStyleSelector x:Key="CustomDayStyleSelectorForMonth">
+                <local:CustomDayStyleSelector.CustomNormalStyle>
+                    <Style TargetType="Label">
+                        <Setter Property="TextColor" Value="{AppThemeBinding Dark=White,Light={StaticResource Gray500}}" />
+                        <Setter Property="HorizontalTextAlignment" Value="Start" />
+                        <Setter Property="VerticalTextAlignment" Value="Start" />
+                        <Setter Property="FontFamily" Value="HelveticaRegular" />
+                        <Setter Property="VerticalOptions" Value="Start" />
+                        <Setter Property="HorizontalOptions" Value="Start" />
+                    </Style>
+                </local:CustomDayStyleSelector.CustomNormalStyle>
+                <local:CustomDayStyleSelector.CustomTodayStyle>
+                    <Style TargetType="Label">
+                        <Setter Property="TextColor" Value="{StaticResource BrandColor}" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                        <Setter Property="HorizontalTextAlignment" Value="Start" />
+                        <Setter Property="VerticalTextAlignment" Value="Start" />
+                        <Setter Property="FontFamily" Value="HelveticaRegular" />
+                        <Setter Property="VerticalOptions" Value="Start" />
+                        <Setter Property="HorizontalOptions" Value="Start" />
+                    </Style>
+                </local:CustomDayStyleSelector.CustomTodayStyle>
+                <local:CustomDayStyleSelector.WeekendLabelStyle>
+                    <Style TargetType="Label">
+                        <Setter Property="TextColor" Value="{StaticResource Gray300}" />
+                        <Setter Property="HorizontalTextAlignment" Value="Start" />
+                        <Setter Property="VerticalTextAlignment" Value="Start" />
+                        <Setter Property="FontFamily" Value="HelveticaRegular" />
+                        <Setter Property="VerticalOptions" Value="Start" />
+                        <Setter Property="HorizontalOptions" Value="Start" />
+                    </Style>
+                </local:CustomDayStyleSelector.WeekendLabelStyle>
+            </local:CustomDayStyleSelector>
+            <!--End of Custom Day Style Selector schedular-->
+
+            <!--Drop down Calendar Style-->
+            <local:CustomCalendarStyleSelector x:Key="DayStyleSelector">
+                <local:CustomCalendarStyleSelector.CustomSelectedLabelStyle>
+                    <Style TargetType="telerik:CalendarBorderLabel">
+                        <Setter Property="TextColor" Value="#04A2AA" />
+                        <Setter Property="FontAttributes" Value="Italic" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="BorderBackgroundColor" Value="#9AD9DD" />
+                    </Style>
+                </local:CustomCalendarStyleSelector.CustomSelectedLabelStyle>
+                <local:CustomCalendarStyleSelector.CustomSelectedMouseOverLabelStyle>
+                    <Style TargetType="telerik:CalendarBorderLabel">
+                        <Setter Property="BorderBackgroundColor" Value="#B3E3E5" />
+                    </Style>
+                </local:CustomCalendarStyleSelector.CustomSelectedMouseOverLabelStyle>
+                <local:CustomCalendarStyleSelector.CustomOutOfScopeLabelStyle>
+                    <Style TargetType="telerik:CalendarLabel">
+                        <Setter Property="TextColor" Value="#6104A2AA" />
+                    </Style>
+                </local:CustomCalendarStyleSelector.CustomOutOfScopeLabelStyle>
+                <local:CustomCalendarStyleSelector.CustomNormalLabelStyle>
+                    <Style TargetType="telerik:CalendarLabel">
+                        <Setter Property="TextColor" Value="#04A2AA" />
+                    </Style>
+                </local:CustomCalendarStyleSelector.CustomNormalLabelStyle>
+                <local:CustomCalendarStyleSelector.CustomTodayLabelStyle>
+                    <Style TargetType="telerik:CalendarBorderLabel">
+                        <Setter Property="TextColor" Value="#04A2AA" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderColor" Value="#B3E3E5" />
+                        <Setter Property="BorderBackgroundColor" Value="Transparent" />
+                    </Style>
+                </local:CustomCalendarStyleSelector.CustomTodayLabelStyle>
+                <local:CustomCalendarStyleSelector.SundayLabelStyle>
+                    <Style TargetType="telerik:CalendarBorderLabel">
+                        <Setter Property="TextColor" Value="#FFD13606" />
+                        <Setter Property="HorizontalTextAlignment" Value="Center" />
+                    </Style>
+                </local:CustomCalendarStyleSelector.SundayLabelStyle>
+                <local:CustomCalendarStyleSelector.SundayMouseOverLabelStyle>
+                    <Style TargetType="telerik:CalendarBorderLabel">
+                        <Setter Property="BorderBackgroundColor" Value="#FFE8D8" />
+                    </Style>
+                </local:CustomCalendarStyleSelector.SundayMouseOverLabelStyle>
+                <local:CustomCalendarStyleSelector.SundaySelectedLabelStyle>
+                    <Style TargetType="telerik:CalendarBorderLabel">
+                        <Setter Property="BorderBackgroundColor" Value="#FFDDC5" />
+                    </Style>
+                </local:CustomCalendarStyleSelector.SundaySelectedLabelStyle>
+                <local:CustomCalendarStyleSelector.SundaySelectedMouseOverLabelStyle>
+                    <Style TargetType="telerik:CalendarBorderLabel" />
+                </local:CustomCalendarStyleSelector.SundaySelectedMouseOverLabelStyle>
+
+            </local:CustomCalendarStyleSelector>
+            <Style TargetType="telerik:RadCalendar" >
+                <Setter Property="DayStyleSelector" Value="{StaticResource DayStyleSelector}" />
+            </Style>
+            <!--End of Drop down Calendar Style-->
+            <Style TargetType="Label" x:Key="TimeRulerLabelStyle">
+                <Setter Property="FontFamily" Value="HelveticaRegular" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource BrandColor}, Dark=White}" />
+            </Style>
+            <!--Grid Lines style start-->
+            <Style TargetType="telerik:SchedulerBoxView" x:Key="MajorTickLineStyle">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource BrandColor}}" />
+            </Style>
+            <Style TargetType="telerik:SchedulerBoxView" x:Key="MinorTickLineStyle">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource BrandColorDarker}}" />
+            </Style>
+            <Style TargetType="telerik:SchedulerBoxView" x:Key="VerticalLineStyle">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray400}}" />
+            </Style>
+            <Style TargetType="telerik:SchedulerBoxView" x:Key="HorizontalLineStyle">
+                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray400}}" />
+            </Style>
+            <Style TargetType="telerik:SchedulerBoxView" x:Key="MonthVerticalLineStyle">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
+            <Style TargetType="telerik:SchedulerBoxView" x:Key="MonthHorizontalLineStyle">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
+            <!--Grid Lines style end-->
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <telerik:RadScheduler
+                                x:Name="EventsCalendar" 
+                                  CurrentDate="{Binding SelectedDate,Mode=TwoWay}"
+                                  AppointmentsSource="{Binding EventListForCal}"
+                                  Loaded="EventsCalendar_Loaded" 
+                                  AppointmentTemplate="{StaticResource AppointmentTemplateSelector}"                         
+                                  ActiveViewDefinitionIndex="{Binding CalendarModeIndex,Mode=TwoWay}"
+                                  HeaderLabelStyle="{StaticResource HeaderLabelStyle}"
+                                  HeaderIndicatorLabelStyle="{StaticResource HeaderIndicatorLabelStyle}"
+                                  TodayButtonStyle="{StaticResource TodayButtonStyle}"
+  
+                                  ViewDefinitionHeaderItemStyle="{StaticResource ViewDefinitionHeaderItemStyle}"
+                                  ActiveViewDefinitionHeaderItemStyle="{StaticResource ActiveViewDefinitionHeaderItemStyle}">
+            
+            <telerik:RadScheduler.ViewDefinitions>
+                <telerik:WeekViewDefinition  HeaderTextFormat="{Binding WeekHeader}"
+                                     DayStyleSelector="{StaticResource CustomDayStyleSelector}"
+                                     TimeRulerLabelStyle="{StaticResource TimeRulerLabelStyle}"
+                                     MajorTickLength="2:00" MinorTickLength="1:00"
+                                     MajorTickLineStyle="{StaticResource MajorTickLineStyle}"
+                                     MinorTickLineStyle="{StaticResource MinorTickLineStyle}"
+                                     VerticalLineStyle="{StaticResource VerticalLineStyle}"
+                                     HorizontalLineStyle="{StaticResource HorizontalLineStyle}"
+                                             Title="{x:Static strings:AppResources.CALENDAR_VIEW_WEEK}"/>
+                <telerik:MultidayViewDefinition VisibleDays="3" 
+                                        HeaderTextFormat="{Binding WeekHeader}"
+                                        DayStyleSelector="{StaticResource CustomDayStyleSelector}"
+                                        TimeRulerLabelStyle="{StaticResource TimeRulerLabelStyle}"
+                                        MajorTickLength="2:00" MinorTickLength="1:00"
+                                        MajorTickLineStyle="{StaticResource MajorTickLineStyle}"
+                                        MinorTickLineStyle="{StaticResource MinorTickLineStyle}"
+                                        VerticalLineStyle="{StaticResource VerticalLineStyle}"
+                                        HorizontalLineStyle="{StaticResource HorizontalLineStyle}"
+                                                Title="{x:Static strings:AppResources.CALENDAR_VIEW_CUSTOM_DAYS}" />
+                <telerik:DayViewDefinition HeaderTextFormat="{}{0:dddd - dd MMMM yyyy}" DayStringFormat="{}{0:dddd - dd MMMM}"
+                                   DayStyleSelector="{StaticResource CustomDayStyleSelector}"
+                                   TimeRulerLabelStyle="{StaticResource TimeRulerLabelStyle}" MajorTickLength="2:00"
+                                   MinorTickLength="1:00"
+                                   MajorTickLineStyle="{StaticResource MajorTickLineStyle}"
+                                   MinorTickLineStyle="{StaticResource MinorTickLineStyle}"
+                                   VerticalLineStyle="{StaticResource VerticalLineStyle}"
+                                   HorizontalLineStyle="{StaticResource HorizontalLineStyle}"
+                                           Title="{x:Static strings:AppResources.CALENDAR_VIEW_DAY}"/>
+                <telerik:MonthViewDefinition HeaderTextFormat="{}{0:yyyy, MMMM}"
+                                     DayStyleSelector="{StaticResource CustomDayStyleSelectorForMonth}"
+                                     VerticalLineStyle="{StaticResource MonthVerticalLineStyle}"
+                                     HorizontalLineStyle="{StaticResource MonthHorizontalLineStyle}"
+                                     DayMoreAppointmentsIndicatorStyle="{StaticResource DayMoreAppointmentsIndicatorStyle}"
+                                             Title="{x:Static strings:AppResources.CALENDAR_VIEW_MONTH}"/>
+            </telerik:RadScheduler.ViewDefinitions>
+        </telerik:RadScheduler>
+        <!--Loading Indicator-->
+        <StackLayout IsVisible="{Binding IsBusy}"
+          BackgroundColor="Transparent" Padding="12" Grid.RowSpan="2"
+          VerticalOptions="Center" HorizontalOptions="Center">
+            <ActivityIndicator IsRunning="{Binding IsBusy}"/>
+        </StackLayout>
+    </Grid>
+</ContentPage>
