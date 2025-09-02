@@ -133,6 +133,15 @@ namespace TelerikMauiShellApp1 {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to My Calendar.
+        /// </summary>
+        internal static string COMMON_MY_CALENDAR {
+            get {
+                return ResourceManager.GetString("COMMON_MY_CALENDAR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Absence.
         /// </summary>
         internal static string TID_TYPE_ABSENCE {

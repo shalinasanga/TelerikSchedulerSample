@@ -139,4 +139,30 @@ namespace TelerikMauiShellApp1
             return value;
         }
     }
+    public class ResourceNameConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+
+            var ContactId = (Guid)value;
+            if (ContactId == Guid.Empty)
+            {
+                return UserProfileSettings.SelectedResource.Name;
+            }
+            if (ContactId == UserProfileSettings.PlannerContactId)
+            {
+                return AppResources.COMMON_MY_CALENDAR;
+            }
+            else
+            {
+                return UserProfileSettings.SelectedResource.Name;
+            }
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 }

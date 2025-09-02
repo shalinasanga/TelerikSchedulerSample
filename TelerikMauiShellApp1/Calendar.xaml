@@ -5,10 +5,12 @@
              xmlns:telerik="http://schemas.telerik.com/2022/xaml/maui"
              xmlns:local="clr-namespace:TelerikMauiShellApp1"
              xmlns:strings="clr-namespace:TelerikMauiShellApp1"
-             Title="Calendar">
+             xmlns:vm="clr-namespace:TelerikMauiShellApp1"
+             x:DataType="vm:CalendarViewModel"
+             >
     <ContentPage.Resources>
         <ResourceDictionary>
-            <!--<converters:ResourceNameConverter x:Key="ResourceNameConverter"/>-->
+            <local:ResourceNameConverter x:Key="ResourceNameConverter"/>
             <local:LabelColorToTintConverter x:Key="LabelColorToTintConverter"/>
             <local:TextToBoolConverter x:Key="TextToBoolConverter"/>
             <local:StatusToIconConverter x:Key="StatusToIconConverter"/>
@@ -414,6 +416,33 @@
             <!--Grid Lines style end-->
         </ResourceDictionary>
     </ContentPage.Resources>
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="20,*,30" Margin="0,0,5,0" ColumnSpacing="10">
+            <Image x:Name="FilterImg" Source="ic_filter_white.png">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="FilterImg_Tapped"/>
+                </Image.GestureRecognizers>
+            </Image>
+            <Border x:Name="SearchFrame" Grid.Column="1" StrokeShape="RoundRectangle 10,10,10,10"
+                  BackgroundColor="{StaticResource BrandColorDarker}"
+                  Padding="5" VerticalOptions="Center">
+                <StackLayout Orientation="Horizontal" AutomationId="homeSearch" VerticalOptions="Center"
+                HorizontalOptions="CenterAndExpand" Spacing="5">
+                    <Image Source="ic_search_white.png" VerticalOptions="Center" />
+                    <Label Text="{Binding SelectedResource.Id,Converter={StaticResource ResourceNameConverter}}" Style="{StaticResource MediumWhiteLable}"
+                     HorizontalOptions="CenterAndExpand"/>
+                </StackLayout>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="SearchFrame_Tapped"/>
+                </Border.GestureRecognizers>
+            </Border>
+            <Image Grid.Column="2" Source="ic_add_reservation_white.png">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="NewApppointment_Tapped"/>
+                </Image.GestureRecognizers>
+            </Image>
+        </Grid>
+    </Shell.TitleView>
     <Grid>
         <telerik:RadScheduler
                                 x:Name="EventsCalendar" 
@@ -425,6 +454,10 @@
                                   HeaderLabelStyle="{StaticResource HeaderLabelStyle}"
                                   HeaderIndicatorLabelStyle="{StaticResource HeaderIndicatorLabelStyle}"
                                   TodayButtonStyle="{StaticResource TodayButtonStyle}"
+            AppointmentTapped="EventsCalendar_AppointmentTapped"
+            SlotTapped="EventsCalendar_SlotTapped"
+            MonthDayTapped="EventsCalendar_MonthDayTapped"
+            DialogOpening="EventsCalendar_DialogOpening"
   
                                   ViewDefinitionHeaderItemStyle="{StaticResource ViewDefinitionHeaderItemStyle}"
                                   ActiveViewDefinitionHeaderItemStyle="{StaticResource ActiveViewDefinitionHeaderItemStyle}">
@@ -468,8 +501,8 @@
         </telerik:RadScheduler>
         <!--Loading Indicator-->
         <StackLayout IsVisible="{Binding IsBusy}"
-          BackgroundColor="Transparent" Padding="12" Grid.RowSpan="2"
-          VerticalOptions="Center" HorizontalOptions="Center">
+          BackgroundColor="Transparent" Padding="12"
+          VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
             <ActivityIndicator IsRunning="{Binding IsBusy}"/>
         </StackLayout>
     </Grid>

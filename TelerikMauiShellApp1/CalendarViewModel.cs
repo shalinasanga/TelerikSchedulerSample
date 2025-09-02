@@ -153,7 +153,7 @@ namespace TelerikMauiShellApp1
                     endDate = startDate.AddMonths(1).AddDays(-1);
                 }
 
-              GenerateRandomEvents(5);
+                GenerateRandomEvents(20);
 
 
                 IsBusy = false;
@@ -172,11 +172,20 @@ namespace TelerikMauiShellApp1
                                     callendar.GetWeekOfYear(SelectedDate, CultureInfo.CurrentUICulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentUICulture.DateTimeFormat.FirstDayOfWeek) +
                                     ")";
         }
-        private void GenerateRandomEvents(int eventCount = 10)
+        ObservableCollection<DetailEventModel> EventDetailsList = new ObservableCollection<DetailEventModel>();
+        private async void GenerateRandomEvents(int eventCount = 10)
         {
+            IsBusy = true;
+
             var random = new Random();
             EventListForCal.Clear();
             string backgroundTint = "#FFFF";
+
+            await Task.Delay(5000); // Simulate network delay
+                                    // Calculate the first and last day of the month based on startDate
+            int daysInMonth = DateTime.DaysInMonth(startDate.Year, startDate.Month);
+            DateTime firstDayOfMonth = new DateTime(startDate.Year, startDate.Month, 1);
+
             for (int i = 0; i < eventCount; i++)
             {
                 if (currentTheme == AppTheme.Dark)
@@ -191,19 +200,24 @@ namespace TelerikMauiShellApp1
                     //< Color x: Key = "CalendarAppointmentBackground" >#f5f6f6</Color>
                     backgroundTint = "#f5f6f6";
                 }
+                string subject = $"No label {i + 1}";
                 // Generate random labels
                 int labelCount = random.Next(1, 4);
                 var labels = new List<EventLabelModel>();
-                for (int j = 0; j < labelCount; j++)
+                if (random.Next(0, 2) == 1) // Randomly add labels for event
                 {
-                    string hex = RandomHexColor();
-                    labels.Add(new EventLabelModel
+                    subject = $"with label {i + 1}";
+                    for (int j = 0; j < labelCount; j++)
                     {
-                        LabelId = Guid.NewGuid(),
-                        LabelCaption = $"Label {j + 1}",
-                        LabelColor = random.Next(0x1000000),
-                        HexColor = hex
-                    });
+                        string hex = RandomHexColor();
+                        labels.Add(new EventLabelModel
+                        {
+                            LabelId = Guid.NewGuid(),
+                            LabelCaption = $"Label {j + 1}",
+                            LabelColor = random.Next(0x1000000),
+                            HexColor = hex
+                        });
+                    }
                 }
                 if (labels.Count > 0)
                 {
@@ -217,50 +231,63 @@ namespace TelerikMauiShellApp1
                 // Random duration between 30 and 180 minutes
                 int durationMinutes = random.Next(30, 181);
                 DateTime end = start.AddMinutes(durationMinutes);
-                Guid OccurenceID = Guid.NewGuid();
+                Guid PK_EventID = Guid.NewGuid();
+                Guid OccurenceID = random.Next(0, 2) == 0 ? PK_EventID : Guid.NewGuid(); // 50% chance to be equal
+                bool isPrivate = random.Next(0, 2) == 0;
+                Guid f_created_User_Id = UserProfileSettings.PlannerUserId;
                 var evt = new DetailEventModel
                 {
-                    Subject= $"Random Event {i + 1}",
+                    PK_EventID = PK_EventID,
+                    Subject = subject,
                     Start = start,
                     End = end,
-                    //EventMessage = $"Random Event {i + 1}",
-                    //DateString = start.ToString("yyyy-MM-dd"),
-                    //TimeString = start.ToString("HH:mm"),
+
                     EventLableList = labels,
                     OccurenceID = OccurenceID,
+                    IsReccuringEvent = PK_EventID != OccurenceID,
 
                     Detail = OccurenceID.ToString(),//Need this to get Normal Appointment template from template selector
-
-                    //ReminderDate = start.AddMinutes(-random.Next(5, 60)),
-                    //IsPrivate = random.Next(0, 2) == 0,
-                    //IsSpecialAttention = random.Next(0, 2) == 0,
-                    //F_ContactID = Guid.NewGuid(),
-                    //F_CreatedUser_ID = Guid.NewGuid(),
-                    //IsPublished = random.Next(0, 2) == 0,
-                    //Responsible = $"User {random.Next(1, 100)}",
-                    //SelectedResourceID = Guid.NewGuid(),
-                    BackgroundTintColor =backgroundTint,
+                    //IsAllDay = random.Next(0, 2) == 0,
+                    IsPrivate = isPrivate,
+                    EventMessage = (isPrivate && f_created_User_Id != UserProfileSettings.PlannerUserId) ? String.Empty : $"Random Event Message {i + 1}",
+                    IsSpecialAttention = random.Next(0, 2) == 0,
+                    BackgroundTintColor = backgroundTint,
+                    Responsible = "John Doe",
+                    LocationCaption = "Test location",
                     //EventLabelColor = random.Next(0x1000000),
-                    //EventStatusColor = random.Next(0x1000000),
-                    //EventStatusDescription = "Random Status",
+                    EventStatusColor = random.Next(0x1000000),
+                    EventStatusDescription = "Random Status",
                     //EventStatusImageSource = "",
-                    //HasReminder = random.Next(0, 2) == 0,
-                    //HasAttachments = random.Next(0, 2) == 0,
-                    //HasMissingResources = random.Next(0, 2) == 0,
-                    //IsReccuringEvent = random.Next(0, 2) == 0,
-                    //HasLink = random.Next(0, 2) == 0,
-                    //IsProsteModulAppointment = random.Next(0, 2) == 0,
-                    //HasEventMessage = random.Next(0, 2) == 0,
+                    HasReminder = random.Next(0, 2) == 0,
+                    HasAttachments = random.Next(0, 2) == 0,
+                    HasMissingResources = random.Next(0, 2) == 0,
+                    HasEventMessage = random.Next(0, 2) == 0,
+                    HasLink = random.Next(0, 2) == 0,
+                    StatStatus = (StatStatusEnum)random.Next(Enum.GetValues(typeof(StatStatusEnum)).Length),
+                    IsStatCodeAdded = random.Next(0, 2) == 0,
+                    F_ContactID = f_created_User_Id,
+                    F_CreatedUser_ID = f_created_User_Id,
                     //IsIconListVisible = random.Next(0, 2) == 0,
                     //EventStatusColorHex = RandomHexColor(),
                     //EventPrimeLabelColorHex = RandomHexColor(),
                     //ItemType = random.Next(1, 5),
                     //EventTemplateID = Guid.NewGuid(),
                     //LableListWidth = random.Next(50, 200)
+                    TimeString = start.ToLocalTime().ToString("M/d/yyyy HH:mm") + " - " + end.ToLocalTime().ToString("M/d/yyyy HH:mm"),
                 };
-
+                //if (!EventDetailsList.Any(x => x.OccurenceID == evt.OccurenceID))
+                //{
+                //   
+                //}
                 EventListForCal.Add(evt);
+               // EventDetailsList.Add(evt);
             }
+
+            //foreach (var evt in EventDetailsList)
+            //{
+            //    EventListForCal.Add(evt);
+            //}
+            IsBusy = false;
         }
 
         private string RandomHexColor()

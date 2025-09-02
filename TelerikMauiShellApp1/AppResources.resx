@@ -141,6 +141,9 @@
   <data name="CAL_FILTER_EVENTSTATUS_UNDERPLANNING" xml:space="preserve">
     <value>Under planning</value>
   </data>
+  <data name="COMMON_MY_CALENDAR" xml:space="preserve">
+    <value>My Calendar</value>
+  </data>
   <data name="TID_TYPE_ABSENCE" xml:space="preserve">
     <value>Absence</value>
   </data>
