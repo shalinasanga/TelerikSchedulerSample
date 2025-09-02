@@ -24,11 +24,11 @@
                         <Border Stroke="{AppThemeBinding Dark=White,Light={StaticResource BorderColor}}" 
                              BackgroundColor="{Binding Occurrence.Appointment.BackgroundTintColor}"
                              StrokeShape="RoundRectangle 0,8,8,0"
-                             StrokeThickness="1" >
-                            <Grid ColumnSpacing="1" ColumnDefinitions="Auto,*">
+                             StrokeThickness="1" IsVisible="True">
+                            <Grid ColumnSpacing="1" ColumnDefinitions="Auto,*" IsVisible="True">
                                 <HorizontalStackLayout x:Name="LabelList" Grid.Column="0"
                                                     BindableLayout.ItemsSource="{Binding Occurrence.Appointment.EventLableList}"
-                                                    Spacing="0.8" >
+                                                    Spacing="0" IsVisible="True" MaximumWidthRequest="13" >
                                     <BindableLayout.ItemTemplate>
                                         <DataTemplate x:DataType="local:EventLabelModel">
                                             <BoxView BackgroundColor="{Binding HexColor}" WidthRequest="2"/>

@@ -153,7 +153,7 @@ namespace TelerikMauiShellApp1
                     endDate = startDate.AddMonths(1).AddDays(-1);
                 }
 
-                GenerateRandomEvents(20);
+                GenerateRandomEvents(10);
 
 
                 IsBusy = false;
@@ -204,7 +204,7 @@ namespace TelerikMauiShellApp1
                 // Generate random labels
                 int labelCount = random.Next(1, 4);
                 var labels = new List<EventLabelModel>();
-                if (random.Next(0, 2) == 1) // Randomly add labels for event
+                if ((random.NextDouble() < 0.3)) // Randomly add labels for event
                 {
                     subject = $"with label {i + 1}";
                     for (int j = 0; j < labelCount; j++)
@@ -247,7 +247,7 @@ namespace TelerikMauiShellApp1
                     IsReccuringEvent = PK_EventID != OccurenceID,
 
                     Detail = OccurenceID.ToString(),//Need this to get Normal Appointment template from template selector
-                    //IsAllDay = random.Next(0, 2) == 0,
+                    IsAllDay = (random.NextDouble() < 0.3),
                     IsPrivate = isPrivate,
                     EventMessage = (isPrivate && f_created_User_Id != UserProfileSettings.PlannerUserId) ? String.Empty : $"Random Event Message {i + 1}",
                     IsSpecialAttention = random.Next(0, 2) == 0,
