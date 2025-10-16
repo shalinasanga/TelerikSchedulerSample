@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TelerikMauiShellApp1.Calendar"
              xmlns:telerik="http://schemas.telerik.com/2022/xaml/maui"
+             xmlns:telerikScheduler="clr-namespace:Telerik.Maui.Controls.Scheduler;assembly=Telerik.Maui.Controls"
              xmlns:local="clr-namespace:TelerikMauiShellApp1"
              xmlns:strings="clr-namespace:TelerikMauiShellApp1"
              xmlns:vm="clr-namespace:TelerikMauiShellApp1"
@@ -167,6 +168,57 @@
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="FontFamily" Value="HelveticaRegular" />
             </Style>
+             <ControlTemplate x:Key="SchedulerWithSegmentsTemplate_Mobile">
+                <Grid RowDefinitions="Auto,*">
+                    <telerikScheduler:SchedulerExpander x:Name="PART_HeaderExpander">
+                        <telerikScheduler:SchedulerExpander.Header>
+                            <telerik:RadBorder Style="{TemplateBinding ActualHeaderBorderStyle}">
+                                <Grid ColumnDefinitions="*,120,Auto,Auto">
+                                    <HorizontalStackLayout HorizontalOptions="Start">
+                                        <Label Style="{TemplateBinding ActualHeaderLabelStyle}" />
+                                        <Label Style="{TemplateBinding ActualHeaderIndicatorLabelStyle}" />
+                                    </HorizontalStackLayout>
+                                    <!-- NOTE: Add the desired UI here -->
+                                    <Border x:Name="CalendarSwitcher" Grid.Column="1" Stroke="{StaticResource BrandColor}"
+                                            StrokeShape="RoundRectangle 10,10,10,10" StrokeThickness="0" Padding="0"
+                                            HeightRequest="30">
+                                        <HorizontalStackLayout Padding="0" Spacing="3">
+                                            <Button x:Name="CalendarSelectSegment"
+                                                   AutomationId="CalendarSelectSegment" Text="Calendar"
+                                                   Style="{StaticResource SwitchSelectedButton}" HeightRequest="25"/>
+
+                                            <!--<BoxView WidthRequest="1" Margin="0,2,0,2" BackgroundColor="{StaticResource Gray100}"/>-->
+                                            <Button x:Name="AgendaSelectSegment"  AutomationId="AgendaSelectSegment" 
+                                                    Text="Agenda"
+                                                    Style="{StaticResource SwitchUnSelectedButton}"
+                                                    TextColor="{StaticResource CommonTextColor}"
+                                                    HeightRequest="25" Clicked="AgendaSelectSegment_Clicked"/>
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                    <Button Grid.Column="2"
+                                            Style="{TemplateBinding ActualTodayButtonStyle}"
+                                            IsVisible="{TemplateBinding IsTodayButtonVisible}"
+                                            Command="{TemplateBinding TodayCommand}" />
+                                    <telerikScheduler:SchedulerDropDownButton x:Name="PART_ViewDefinitionPicker"
+                                                                    Grid.Column="3"
+                                                                    ItemStyle="{TemplateBinding ActualViewDefinitionHeaderItemStyle}"
+                                                                    SelectedItemStyle="{TemplateBinding ActualActiveViewDefinitionHeaderItemStyle}" />
+                                </Grid>
+                            </telerik:RadBorder>
+                        </telerikScheduler:SchedulerExpander.Header>
+                        <telerikScheduler:SchedulerExpander.Content>
+                            <telerik:RadCalendar x:Name="PART_HeaderCalendar"
+                                        Style="{StaticResource SchedulerCalendarStyle_Mobile}"
+                                        Culture="{Binding Culture, Source={RelativeSource TemplatedParent}}"
+                                        DisplayDate="{Binding CurrentDate, Source={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                        SelectedDate="{Binding CurrentDate, Source={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                        </telerikScheduler:SchedulerExpander.Content>
+                    </telerikScheduler:SchedulerExpander>
+                    <telerik:RadSchedulerContent x:Name="PART_SchedulerContent"
+                                        Grid.Row="1"
+                                        IsClippedToBounds="True" />
+                </Grid>
+            </ControlTemplate>
             <!--<Style TargetType="Button" x:Key="IncreaseVisibleRangeButtonStyle">
              <Setter Property="Text" Value="{x:Static telerik:TelerikFont.IconForward}" />
              <Setter Property="TextColor" Value="#674BB2" />
@@ -454,6 +506,7 @@
                                   HeaderLabelStyle="{StaticResource HeaderLabelStyle}"
                                   HeaderIndicatorLabelStyle="{StaticResource HeaderIndicatorLabelStyle}"
                                   TodayButtonStyle="{StaticResource TodayButtonStyle}"
+                                  ControlTemplate="{StaticResource SchedulerWithSegmentsTemplate_Mobile}"
             AppointmentTapped="EventsCalendar_AppointmentTapped"
             SlotTapped="EventsCalendar_SlotTapped"
             MonthDayTapped="EventsCalendar_MonthDayTapped"

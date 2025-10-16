@@ -35,7 +35,10 @@ public partial class Calendar : ContentPage
            DisplayAlert("Error", ex.Message, "OK");
         }
     }
-
+ private async void AgendaSelectSegment_Clicked(object sender, EventArgs e)
+    {
+       
+    }
     private void EventsCalendar_AppointmentTapped(object sender, Telerik.Maui.Controls.Scheduler.TappedEventArgs<Telerik.Maui.Controls.Scheduler.Occurrence> e)
     {
 
