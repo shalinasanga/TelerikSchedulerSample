@@ -173,7 +173,7 @@
                     <telerikScheduler:SchedulerExpander x:Name="PART_HeaderExpander">
                         <telerikScheduler:SchedulerExpander.Header>
                             <telerik:RadBorder Style="{TemplateBinding ActualHeaderBorderStyle}">
-                                <Grid ColumnDefinitions="*,120,Auto,Auto">
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
                                     <HorizontalStackLayout HorizontalOptions="Start">
                                         <Label Style="{TemplateBinding ActualHeaderLabelStyle}" />
                                         <Label Style="{TemplateBinding ActualHeaderIndicatorLabelStyle}" />
@@ -219,6 +219,17 @@
                                         IsClippedToBounds="True" />
                 </Grid>
             </ControlTemplate>
+            <Style x:Key="SchedulerCalendarStyle_Mobile" TargetType="telerik:RadCalendar">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="HeaderBorderStyle">
+                    <Setter.Value>
+                        <Style TargetType="telerik:RadBorder">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="HeightRequest" Value="308" />
+            </Style>
             <!--<Style TargetType="Button" x:Key="IncreaseVisibleRangeButtonStyle">
              <Setter Property="Text" Value="{x:Static telerik:TelerikFont.IconForward}" />
              <Setter Property="TextColor" Value="#674BB2" />
